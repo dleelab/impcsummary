@@ -4,6 +4,4 @@ A [workflowr][] project.
 
 [workflowr]: https://github.com/jdblischak/workflowr
 
-test
-test test
-etst
+Check the resulting site [here](http://dleelab.github.io/testproject/)
