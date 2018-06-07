@@ -20,9 +20,3 @@ output:
     toc_float: true
     theme: readable
     highlight: textmate
-    code_folding: none
-    lib_dir: site_libs
-    self_contained: no
-    include:
-      before_body: include/header.html
-      after_body: include/footer.html
