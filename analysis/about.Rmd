@@ -1,8 +1,232 @@
 ---
-title: "About"
+title: "IMPC summary statistics analyses"
+author: "Donghyung Lee"
+date: "`r Sys.Date()`"
 output:
-  workflowr::wflow_html:
-    toc: false
+  html_document: default
+  word_document: default
 ---
 
-Describe your project.
+
+```{r load_packages, echo=TRUE}
+rm(list=ls())
+library(plyr)
+library(ggplot2)
+library(RColorBrewer)
+library(reshape2)
+library(mvtnorm)
+library(corrplot)
+library(data.table) #fread
+library(plotly)
+library(pheatmap)
+library(heatmaply)
+
+color.vec <- brewer.pal(8, "Set1")
+
+
+FIQT <- function(z=z, min.p=10^-300){
+    pvals<-2*pnorm(abs(z),low=F)
+    pvals[pvals<min.p]<- min.p
+    adj.pvals<-p.adjust(pvals,method="fdr")
+    mu.z<-sign(z)*qnorm(adj.pvals/2,low=F)
+    mu.z[abs(z)>qnorm(min.p/2,low=F)]<-z[abs(z)>qnorm(min.p/2,low=F)]
+    mu.z
+}
+
+```
+
+```{r load_datasets, echo=TRUE}
+## load IMPC summary stats 7.0
+IMPC.summary.stats.file <- "/Users/leed1/Dropbox/KOMP/results/IMPC_Summary_Stat_Study/R_input/version_7.0/IMPC_ALL_statistical_results.csv"
+IMPC.summary.stats <- as.data.frame(fread(IMPC.summary.stats.file, header=TRUE, sep=","))
+dim(IMPC.summary.stats)
+head(IMPC.summary.stats)
+
+```
+
+```{r prep_KOMP}
+## Prep KOMP data
+
+summ.data <- IMPC.summary.stats
+
+#table(summ.data$parameter_name)
+summ.data$marker_symbol_combined <- paste0(summ.data$marker_symbol,"_",summ.data$zygosity)
+
+#table(bnp.data$marker_symbol_combined)
+#table(bnp.data$marker_symbol_combined)[table(bnp.data$marker_symbol_combined)>6]
+
+#test <- subset(bnp.data, marker_symbol_combined=="Otub1_heterozygote")
+#duplicated(test[,1:33,35:88]) ## 34
+#colnames(test)[34]
+dim(summ.data)
+summ.data <- summ.data[,c("procedure_name","parameter_name","marker_symbol","marker_symbol_combined",
+                        "genotype_effect_parameter_estimate","genotype_effect_stderr_estimate",
+                        "genotype_effect_p_value")]
+summ.data$zscore <- (summ.data$genotype_effect_parameter_estimate/summ.data$genotype_effect_stderr_estimate) # Z-score
+summ.data$phenotype <- paste0(summ.data$procedure_name,"_",summ.data$parameter_name)
+summary(summ.data$zscore)
+head(summ.data)
+
+summ.data$fdr <- p.adjust(summ.data$genotype_effect_p_value, method="BH",
+                                                                       n= length(na.omit(summ.data$genotype_effect_p_value)))
+dim(summ.data)
+summ.data <- na.omit(summ.data)
+dim(summ.data)
+
+sdf <- ddply(summ.data, c("procedure_name","phenotype")
+             , summarise,
+             mean=mean(zscore, na.rm=TRUE), sd=sd(zscore, na.rm=TRUE), 
+             n= sum(!is.na(zscore)), 
+             #tstat=t.test(zscore)$statistic, 
+             #pval=t.test(zscore)$p.value, 
+             num.sig.genes = sum(fdr<0.05, na.rm=TRUE))
+
+sdf <- sdf[order(sdf$mean),]
+summ.data$phenotype <- factor(summ.data$phenotype, levels=sdf$phenotype)
+```
+
+```{r plot1,  fig.height=50, fig.width=10}
+
+p1 <- ggplot(summ.data, aes(phenotype, zscore, title=""))
+p1 <- p1 + geom_boxplot()
+p1 <- p1 + geom_hline(yintercept = 0, color="red")
+p1 <- p1 + geom_hline(yintercept = -2, color="blue") ## z=1.96 for two-sided test at alpha=0.05
+p1 <- p1 + geom_hline(yintercept = 2, color="blue")  ## z=-1.96 for two-sided test
+p1 <- p1 + ggtitle("Association Z-score Non-centrality")
+p1 <- p1 + xlab("Domain & Phenotype")
+p1 <- p1 + ylab("Phenotype-Genotype Association Z-score")
+p1 <- p1 + coord_flip()
+p1
+```
+
+```{r plot2,  fig.height=6, fig.width=12}
+
+sdf.f <- subset(sdf, n>=10) 
+
+p <- ggplot(sdf.f, aes(x=mean, y=num.sig.genes, text = phenotype)) 
+p <- p + geom_point(size=2, aes(colour = procedure_name))
+p <- p + geom_smooth(method = "loess", size=1, aes(group=1))
+p <- p + labs(y= "# of Sig Genes", x= "Z-score Mean Per Phenotype")
+p <- p + theme_bw()
+p <- p + theme(plot.background = element_blank() ,
+                              panel.border = element_blank(),
+                              panel.background = element_blank())
+p <- p + theme(axis.line = element_line(color = 'black'))
+p <- p + theme(axis.title.x = element_text(size = 15, vjust= 0))
+p <- p + theme(axis.title.y = element_text(size = 15, vjust= 0))
+p <- p + theme(strip.text.x = element_text(size = 8))
+#p
+ggplotly(p)
+#ggplotly(p, height=800, width=1200)
+
+```
+
+```{r plot3,  fig.height=6, fig.width=12}
+
+sdf.f <- subset(sdf, n>=10) 
+
+p <- ggplot(sdf.f, aes(x=mean, y=100*sdf.f$num.sig.genes/sdf.f$n, text = phenotype)) 
+p <- p + geom_point(size=2, aes(colour = procedure_name))
+p <- p + geom_smooth(method = "loess", size=1, aes(group=1))
+p <- p + labs(y= "Prop. Sig Genes", x= "Z-score Mean Per Phenotype")
+p <- p + theme_bw()
+p <- p + theme(plot.background = element_blank() ,
+                              panel.border = element_blank(),
+                              panel.background = element_blank())
+p <- p + theme(axis.line = element_line(color = 'black'))
+p <- p + theme(axis.title.x = element_text(size = 15, vjust= 0))
+p <- p + theme(axis.title.y = element_text(size = 15, vjust= 0))
+p <- p + theme(strip.text.x = element_text(size = 8))
+#p
+ggplotly(p)
+#ggplotly(p, height=800, width=1200)
+```
+
+```{r one_gene_all_pheno }
+sdfp <- ddply(summ.data, c("marker_symbol","marker_symbol_combined")
+             , summarise,
+             mean=mean(zscore, na.rm=TRUE), sd=sd(zscore, na.rm=TRUE), 
+             n= sum(!is.na(zscore)), 
+             #tstat=t.test(zscore)$statistic, 
+             #pval=t.test(zscore)$p.value, 
+             num.sig.genes = sum(fdr<0.05, na.rm=TRUE))
+
+sdfp <- sdfp[order(sdfp$mean),]
+summ.data$marker_symbol_combined <- factor(summ.data$marker_symbol_combined, levels=sdfp$marker_symbol_combined)
+plot(sdfp$mean, sdfp$n)
+```
+
+```{r plot_mean,  fig.height=50, fig.width=10}
+
+p1 <- ggplot(summ.data, aes(marker_symbol_combined, zscore, title=""))
+p1 <- p1 + geom_boxplot()
+p1 <- p1 + geom_hline(yintercept = 0, color="red")
+p1 <- p1 + geom_hline(yintercept = -2, color="blue") ## z=1.96 for two-sided test at alpha=0.05
+p1 <- p1 + geom_hline(yintercept = 2, color="blue")  ## z=-1.96 for two-sided test
+p1 <- p1 + ggtitle("Association Z-score Non-centrality")
+p1 <- p1 + xlab("Knockout Gene")
+p1 <- p1 + ylab("Phenotype-Genotype Association Z-score")
+p1 <- p1 + coord_flip()
+p1
+```
+
+
+```{r plot5,  fig.height=6, fig.width=12}
+
+dim(sdfp)
+sdfp.f <- subset(sdfp, n>=10) 
+dim(sdfp.f)
+p <- ggplot(sdfp.f, aes(x=mean, y=100*sdfp.f$num.sig.genes/sdfp.f$n, text = marker_symbol_combined)) 
+p <- p + geom_point(size=2)
+#p <- p + geom_point(size=2, aes(colour = procedure_name))
+p <- p + geom_smooth(method = "loess", size=1, aes(group=1))
+p <- p + labs(y= "Prop. Sig Phenotypes", x= "Z-score Mean Per Gene")
+p <- p + theme_bw()
+p <- p + theme(plot.background = element_blank() ,
+                              panel.border = element_blank(),
+                              panel.background = element_blank())
+p <- p + theme(axis.line = element_line(color = 'black'))
+p <- p + theme(axis.title.x = element_text(size = 15, vjust= 0))
+p <- p + theme(axis.title.y = element_text(size = 15, vjust= 0))
+p <- p + theme(strip.text.x = element_text(size = 8))
+#p
+ggplotly(p)
+#ggplotly(p, height=800, width=1200)
+```
+
+```{r plot_correlation,  fig.height=40, fig.width=40}
+
+dim(summ.data)
+hist(sdf$n)
+dim(sdf)
+
+sdf.100 <- droplevels(subset(sdf, n>=100))
+sdf.100$phenotype <- as.factor(sdf.100$phenotype)
+dim(sdf.100)
+
+
+summ.zscore.df <- summ.data[,c("procedure_name","phenotype","marker_symbol_combined","zscore")]
+dim(summ.zscore.df)
+summ.zscore.df <- summ.zscore.df[summ.zscore.df$phenotype %in% levels(sdf.100$phenotype),]
+summ.zscore.df <- droplevels(summ.zscore.df)
+dim(summ.zscore.df)
+
+summ.zscore.df <- dcast(data=summ.zscore.df, formula= phenotype~marker_symbol_combined, fun.aggregate = sum, value.var = "zscore")
+dim(summ.zscore.df)
+head(summ.zscore.df[,1:5])
+
+summ.zscore.mat <- as.matrix(summ.zscore.df[,-1])
+rownames(summ.zscore.mat) <- summ.zscore.df$phenotype
+head(summ.zscore.mat[,1:5])
+dim(summ.zscore.mat)
+
+pheno.cor.mat <- cor(t(summ.zscore.mat), use="pairwise")
+pheatmap(pheno.cor.mat)
+
+plot_ly(z=pheno.cor.mat, type="heatmap")
+
+pheno.cor.df <- as.data.frame(pheno.cor.mat)
+
+heatmaply(pheno.cor.df, k_row=10, k_col=10, plot_method="plotly")
+
+```
