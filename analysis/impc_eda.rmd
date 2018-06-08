@@ -1,0 +1,102 @@
+---
+title: "IMPC summary statistics exploratory data analysis"
+author: "Donghyung Lee"
+date: "`r Sys.Date()`"
+output: workflowr::wflow_html
+---
+
+Here, I will conduct an exploratory data analysis on the IMPC summary statistics.
+```{r knitr-opts, include=FALSE}
+knitr::opts_chunk$set(comment = "#",collapse = TRUE)
+```
+
+
+## Load R packages
+```{r load_packages, message=FALSE}
+rm(list=ls())
+#library(plyr)
+#library(ggplot2)
+library(RColorBrewer)
+#library(reshape2)
+#library(mvtnorm)
+#library(corrplot)
+library(data.table) #fread
+library(knitr)
+library(kableExtra)
+library(plotly)
+library(pheatmap)
+library(heatmaply)
+
+color.vec <- brewer.pal(8, "Set1")
+```
+
+## Reading the summary data
+```{r load_data}
+## load IMPC summary stats 7.0
+IMPC.summary.stats.file <- "~/Dropbox/KOMP/results/IMPC_Summary_Stat_Study/R_input/version_7.0/IMPC_ALL_statistical_results.csv"
+IMPC.summary.stats <- as.data.frame(fread(IMPC.summary.stats.file, header=TRUE, sep=","))
+IMPC.summary.stats$marker_symbol_combined <- paste0(IMPC.summary.stats$marker_symbol,"_",IMPC.summary.stats$zygosity)
+IMPC.summary.stats$intermediate_mp_term_name <- NULL
+IMPC.summary.stats$intermediate_mp_term_id <- NULL
+dim(IMPC.summary.stats)
+colnames(IMPC.summary.stats)
+```
+
+## First part of summary table
+```{r head_data}
+kable(as.data.frame(head(IMPC.summary.stats)), caption = "Head of Table") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"), full_width = F, position="left", font_size = 10)
+```
+
+## Phenotyping Centers
+```{r phenotyping_centers}
+pheno.center <- as.data.frame.vector(table(IMPC.summary.stats$phenotyping_center))
+colnames(pheno.center) <- "Counts"
+kable(pheno.center) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+```
+## Phenotyping Procedures
+```{r phenotyping_procedures}
+proc.name <- as.data.frame.vector(table(IMPC.summary.stats$procedure_name))
+colnames(proc.name) <- "Counts"
+kable(proc.name) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+```
+## Phenotype Names
+```{r phenotype_names}
+pheno.name <- as.data.frame.vector(table(IMPC.summary.stats$parameter_name))
+colnames(pheno.name) <- "Counts"
+kable(pheno.name) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+ggplot(data=pheno.name, aes(pheno.name$Counts)) + geom_histogram() + labs(x="Phenotype", y="Count")
+```
+
+## Mutant Lines
+```{r mutant_lines}
+mutant.lines <- as.data.frame.vector(table(IMPC.summary.stats$marker_symbol_combined))
+colnames(mutant.lines) <- "Counts"
+kable(mutant.lines) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+```
+
+
+## Phenotype Procedures & Centers
+```{r pheno_assay_center}
+assay.center <- as.data.frame.matrix(table(IMPC.summary.stats$procedure_name, IMPC.summary.stats$phenotyping_center))
+kable(assay.center) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+```
+## Phenotypes & Mutant Lines
+```{r pheno_mutant, fig.width= 20, fig.height=40}
+pheno.mutant <- as.data.frame.matrix(table(IMPC.summary.stats$marker_symbol_combined, IMPC.summary.stats$parameter_name))
+#kable(pheno.mutant)  %>% 
+#  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+
+pheno.mutant <- pheno.mutant[rowSums(pheno.mutant)>=500,]
+pheno.mutant <- pheno.mutant[,colSums(pheno.mutant)>=400]
+dim(pheno.mutant)
+
+#pheatmap(pheno.mutant, color=brewer.pal(9, "Reds"), cluster_rows = F, cluster_cols = F)
+pheatmap(pheno.mutant, color=brewer.pal(9, "Reds"), treeheight_row = 0, treeheight_col = 0)
+#plot_ly(z=pheno.mutant, type="heatmap")
+```

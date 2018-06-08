@@ -9,9 +9,10 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Donghyung Lee" />
 
 
-<title>Home</title>
+<title>Analyses of IMPC summary statistics</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -173,15 +174,15 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">testproject</a>
+      <a class="navbar-brand" href="index.html">IMPC Summary</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">Overview</a>
 </li>
 <li>
-  <a href="about.html">About</a>
+  <a href="impc_eda.html">Analyses</a>
 </li>
 <li>
   <a href="license.html">License</a>
@@ -189,7 +190,7 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/dleelab/testproject">
+  <a href="https://github.com/dleelab/impcsummary">
     <span class=" source"></span>
      
   </a>
@@ -210,25 +211,34 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">Analyses of IMPC summary statistics</h1>
+<h4 class="author"><em>Donghyung Lee</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-06-07</p>
+<p><strong>Last updated:</strong> 2018-06-08</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p><details> <summary> <strong style="color:red;">✖</strong> <strong>R Markdown file:</strong> uncommitted changes </summary> The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/dleelab/testproject/tree/35ad9e160a71a145771b0e6fb82fc7078f9fd9f5" target="_blank">35ad9e1</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/dleelab/testproject/tree/e57e5034260789a0a68142c01b8f5deab0f52014" target="_blank">e57e503</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/impc_eda.rmd
+    Untracked:  docs/figure/impc_eda.rmd/
+
+Unstaged changes:
+    Modified:   README.md
+    Modified:   analysis/_site.yml
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -257,6 +267,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/dleelab/testproject/e57e5034260789a0a68142c01b8f5deab0f52014/docs/index.html" target="_blank">e57e503</a>
+</td>
+<td style="text-align:left;">
+dleelab
+</td>
+<td style="text-align:left;">
+2018-06-07
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -296,7 +323,10 @@ Start workflowr project.
 </ul>
 <p></details></p>
 <hr />
-<p>Welcome to my research website.</p>
+<div id="project-overview" class="section level2">
+<h2>Project Overview</h2>
+<p>Here, I studied the phenotype-genotype association summary statistics (<a href="ftp://ftp.ebi.ac.uk/pub/databases/impc/release-7.0">ver7.0</a>) from the IMPC Consortium. All the analyses are listed in the Analses section above.</p>
+</div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see

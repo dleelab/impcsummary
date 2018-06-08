@@ -1,8 +1,3 @@
-# testproject
+# Analyses of IMPC summary stats
 
-A [workflowr][] project.
-
-[workflowr]: https://github.com/jdblischak/workflowr
-
-Check the resulting site [here](http://dleelab.github.io/testproject/)
-test
+Check the resulting site [here](http://dleelab.github.io/impcsummary/)

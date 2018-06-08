@@ -1,19 +1,19 @@
-name: "testproject"
+name: "IMPC Summary"
 output_dir: "../docs"
 include: [".nojekyll"]
 exclude: ["include"]
 navbar:
-  title: "testproject"
+  title: "IMPC Summary"
   left:
-    - text: "Home"
+    - text: "Overview"
       href: index.html
-    - text: "About"
-      href: about.html
+    - text: "Analyses"
+      href: impc_eda.html
     - text: "License"
       href: license.html
   right:
     - icon: source
-      href: https://github.com/dleelab/testproject
+      href: https://github.com/dleelab/impcsummary
 output:
   workflowr::wflow_html:
     toc: true
