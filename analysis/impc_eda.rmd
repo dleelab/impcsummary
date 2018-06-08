@@ -96,7 +96,5 @@ pheno.mutant <- pheno.mutant[rowSums(pheno.mutant)>=500,]
 pheno.mutant <- pheno.mutant[,colSums(pheno.mutant)>=400]
 dim(pheno.mutant)
 
-#pheatmap(pheno.mutant, color=brewer.pal(9, "Reds"), cluster_rows = F, cluster_cols = F)
-pheatmap(pheno.mutant, color=brewer.pal(9, "Reds"), treeheight_row = 0, treeheight_col = 0)
-#plot_ly(z=pheno.mutant, type="heatmap")
+pheatmap(pheno.mutant[1:200,1:50], color=brewer.pal(9, "Reds"), treeheight_row = 0, treeheight_col = 0)
 ```
