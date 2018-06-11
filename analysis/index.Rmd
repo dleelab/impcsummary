@@ -4,9 +4,9 @@ author: "Donghyung Lee"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
-    toc: false
+    toc: true
 ---
 
 ## Project Overview
 
-Here, I studied the phenotype-genotype association summary statistics ([ver7.0](ftp://ftp.ebi.ac.uk/pub/databases/impc/release-7.0)) from the IMPC Consortium. All the analyses are listed in the Analses section above.
+Here, we studied the phenotype-genotype association summary statistics ([ver7.0](ftp://ftp.ebi.ac.uk/pub/databases/impc/release-7.0)) from the IMPC Consortium. All the analyses are listed in the Analses section above.

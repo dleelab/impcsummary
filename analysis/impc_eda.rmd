@@ -1,5 +1,5 @@
 ---
-title: "IMPC summary stat exploratory data analysis"
+title: "IMPC summary stats exploratory data analysis"
 author: "Donghyung Lee"
 date: "`r Sys.Date()`"
 output: 

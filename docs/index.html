@@ -20,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -164,6 +167,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -190,10 +288,7 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/dleelab/impcsummary">
-    <span class=" source"></span>
-     
-  </a>
+  <a href="https://github.com/dleelab/impcsummary">source</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -217,7 +312,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-06-08</p>
+<p><strong>Last updated:</strong> 2018-06-11</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -225,19 +320,15 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/dleelab/testproject/tree/e57e5034260789a0a68142c01b8f5deab0f52014" target="_blank">e57e503</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/dleelab/testproject/tree/89a28554579b393031b98781712c165f8ef4290b" target="_blank">89a2855</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
-Untracked files:
-    Untracked:  analysis/impc_eda.rmd
-    Untracked:  docs/figure/impc_eda.rmd/
-
 Unstaged changes:
-    Modified:   README.md
-    Modified:   analysis/_site.yml
+    Modified:   analysis/impc_eda.rmd
     Modified:   analysis/index.Rmd
 
 </code></pre>
@@ -267,6 +358,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/dleelab/testproject/blob/a3026c32ec48b63e1c277e093899b78ea153e322/analysis/index.Rmd" target="_blank">a3026c3</a>
+</td>
+<td style="text-align:left;">
+dleelab
+</td>
+<td style="text-align:left;">
+2018-06-08
+</td>
+<td style="text-align:left;">
+IMPC added
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/dleelab/testproject/a3026c32ec48b63e1c277e093899b78ea153e322/docs/index.html" target="_blank">a3026c3</a>
+</td>
+<td style="text-align:left;">
+dleelab
+</td>
+<td style="text-align:left;">
+2018-06-08
+</td>
+<td style="text-align:left;">
+IMPC added
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -325,7 +450,7 @@ Start workflowr project.
 <hr />
 <div id="project-overview" class="section level2">
 <h2>Project Overview</h2>
-<p>Here, I studied the phenotype-genotype association summary statistics (<a href="ftp://ftp.ebi.ac.uk/pub/databases/impc/release-7.0">ver7.0</a>) from the IMPC Consortium. All the analyses are listed in the Analses section above.</p>
+<p>Here, we studied the phenotype-genotype association summary statistics (<a href="ftp://ftp.ebi.ac.uk/pub/databases/impc/release-7.0">ver7.0</a>) from the IMPC Consortium. All the analyses are listed in the Analses section above.</p>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
@@ -349,6 +474,8 @@ footer is added to webpages before the MathJax javascript. -->
 <hr>
 
 
+</div>
+</div>
 
 </div>
 
