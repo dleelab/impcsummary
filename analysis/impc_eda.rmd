@@ -50,8 +50,9 @@ colnames(IMPC.summary.stats)
 
 ## First part of summary table
 ```{r head_data}
-kable(as.data.frame(head(IMPC.summary.stats)), caption = "Head of Table") %>%
-  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"), full_width = F, position="left", font_size = 10)
+kable(as.data.frame(head(IMPC.summary.stats))) %>%
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F, position="left") %>%
+  scroll_box(width = "100%", height = "300px")
 ```
 
 ## Phenotyping Centers
@@ -61,49 +62,44 @@ colnames(pheno.center) <- "Counts"
 kable(pheno.center) %>% 
   kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
 ```
-## Phenotyping Procedures
-```{r phenotyping_procedures}
-proc.name <- as.data.frame.vector(table(IMPC.summary.stats$procedure_name))
-colnames(proc.name) <- "Counts"
-kable(proc.name) %>% 
-  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
-```
-## Phenotype Names
-```{r phenotype_names}
-pheno.name <- as.data.frame.vector(table(IMPC.summary.stats$parameter_name))
-colnames(pheno.name) <- "Counts"
-kable(pheno.name) %>% 
-  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
-ggplot(data=pheno.name, aes(pheno.name$Counts)) + geom_histogram() + labs(x="Phenotype", y="Count")
-```
-
-## Mutant Lines
-```{r mutant_lines}
-mutant.lines <- as.data.frame.vector(table(IMPC.summary.stats$marker_symbol_combined))
-colnames(mutant.lines) <- "Counts"
-kable(mutant.lines) %>% 
-  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
-```
-
 
 ## Phenotype Procedures & Centers
 ```{r pheno_assay_center}
 assay.center <- as.data.frame.matrix(table(IMPC.summary.stats$procedure_name, IMPC.summary.stats$phenotyping_center))
 kable(assay.center) %>% 
-  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F) %>%
+  scroll_box(width = "100%", height = "400px")
 ```
-## Phenotypes & Mutant Lines
-```{r pheno_mutant, fig.width= 20, fig.height=40}
-pheno.mutant <- as.data.frame.matrix(table(IMPC.summary.stats$marker_symbol_combined, IMPC.summary.stats$parameter_name))
-#kable(pheno.mutant)  %>% 
-#  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
 
-#pheno.mutant <- pheno.mutant[rowSums(pheno.mutant)>=500,]
-#pheno.mutant <- pheno.mutant[,colSums(pheno.mutant)>=400]
+## Phenotype Names & Centers
+```{r phenotype_names}
+pheno.names.centers <- as.data.frame.matrix(table(IMPC.summary.stats$parameter_name, IMPC.summary.stats$phenotyping_center))
+kable(pheno.names.centers) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F) %>%
+  scroll_box(width = "100%", height = "400px")
+
+pheno.names <- as.data.frame.vector(table(IMPC.summary.stats$parameter_name))
+colnames(pheno.names) <- "Counts"
+ggplot(data=pheno.names, aes(pheno.names$Counts)) + geom_histogram() + labs(x="Phenotype", y="Count")
+```
+
+## Mutant Lines & Centers
+```{r mutant_lines}
+mutant.lines.centers <- as.data.frame.matrix(table(IMPC.summary.stats$marker_symbol_combined, IMPC.summary.stats$phenotyping_center))
+kable(mutant.lines.centers) %>% 
+  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F) %>%
+  scroll_box(width = "100%", height = "400px")
+
+mutant.lines <- as.data.frame.vector(table(IMPC.summary.stats$marker_symbol_combined))
+colnames(mutant.lines) <- "Counts"
+ggplot(data=mutant.lines, aes(mutant.lines$Counts)) + geom_histogram() + labs(x="Mutant Line", y="Count")
+```
+
+## Phenotypes & Mutant Lines
+```{r pheno_mutant}
+pheno.mutant <- as.data.frame.matrix(table(IMPC.summary.stats$marker_symbol_combined, IMPC.summary.stats$parameter_name))
 dim(pheno.mutant)
 class(pheno.mutant)
-
-#pheatmap(pheno.mutant[1:200,1:50], color=brewer.pal(9, "Reds"), treeheight_row = 0, treeheight_col = 0)
 
 m <- list(
   l = 150,
@@ -114,7 +110,5 @@ m <- list(
 )
 
 plot_ly(x=colnames(pheno.mutant), y=rownames(pheno.mutant), z=as.matrix(pheno.mutant), colors= brewer.pal(9, "Reds"), type="heatmap") %>% layout(autosize=F, width=800, height=800, margin=m)
-#heatmaply(x=pheno.mutant, labCol=colnames(pheno.mutant), labRow=rownames(pheno.mutant)) %>% 
-#  layout(height=1200, width=400)
 table(as.matrix(pheno.mutant))
 ```
