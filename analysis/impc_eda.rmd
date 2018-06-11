@@ -98,9 +98,23 @@ pheno.mutant <- as.data.frame.matrix(table(IMPC.summary.stats$marker_symbol_comb
 #kable(pheno.mutant)  %>% 
 #  kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F)
 
-pheno.mutant <- pheno.mutant[rowSums(pheno.mutant)>=500,]
-pheno.mutant <- pheno.mutant[,colSums(pheno.mutant)>=400]
+#pheno.mutant <- pheno.mutant[rowSums(pheno.mutant)>=500,]
+#pheno.mutant <- pheno.mutant[,colSums(pheno.mutant)>=400]
 dim(pheno.mutant)
+class(pheno.mutant)
 
-pheatmap(pheno.mutant[1:200,1:50], color=brewer.pal(9, "Reds"), treeheight_row = 0, treeheight_col = 0)
+#pheatmap(pheno.mutant[1:200,1:50], color=brewer.pal(9, "Reds"), treeheight_row = 0, treeheight_col = 0)
+
+m <- list(
+  l = 150,
+  r = 50,
+  b = 200,
+  t = 10,
+  pad = 4
+)
+
+plot_ly(x=colnames(pheno.mutant), y=rownames(pheno.mutant), z=as.matrix(pheno.mutant), colors= brewer.pal(9, "Reds"), type="heatmap") %>% layout(autosize=F, width=800, height=800, margin=m)
+#heatmaply(x=pheno.mutant, labCol=colnames(pheno.mutant), labRow=rownames(pheno.mutant)) %>% 
+#  layout(height=1200, width=400)
+table(as.matrix(pheno.mutant))
 ```
