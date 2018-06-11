@@ -9,3 +9,5 @@ All source code and software in this repository are made available
 under the terms of the
 [MIT license](https://opensource.org/licenses/mit-license.html). 
 
+The IMPC phenotype-genotype association summary statistics can be downloaded from  [ver7.0](ftp://ftp.ebi.ac.uk/pub/databases/impc/release-7.0).
+
