@@ -1,8 +1,14 @@
 ---
-title: "IMPC summary statistics exploratory data analysis"
+title: "IMPC summary stat exploratory data analysis"
 author: "Donghyung Lee"
 date: "`r Sys.Date()`"
-output: workflowr::wflow_html
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{IMPC summary stat exploratory data analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 Here, I will conduct an exploratory data analysis on the IMPC summary statistics.

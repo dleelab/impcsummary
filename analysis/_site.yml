@@ -12,7 +12,7 @@ navbar:
     - text: "License"
       href: license.html
   right:
-    - icon: source
+    - text: source
       href: https://github.com/dleelab/impcsummary
 output:
   workflowr::wflow_html:
