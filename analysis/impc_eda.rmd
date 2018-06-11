@@ -52,7 +52,7 @@ colnames(IMPC.summary.stats)
 ```{r head_data}
 kable(as.data.frame(head(IMPC.summary.stats))) %>%
   kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F, position="left") %>%
-  scroll_box(width = "100%", height = "300px")
+  scroll_box(width = "120%")
 ```
 
 ## Phenotyping Centers
@@ -68,7 +68,7 @@ kable(pheno.center) %>%
 assay.center <- as.data.frame.matrix(table(IMPC.summary.stats$procedure_name, IMPC.summary.stats$phenotyping_center))
 kable(assay.center) %>% 
   kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F) %>%
-  scroll_box(width = "100%", height = "400px")
+  scroll_box(height = "500px")
 ```
 
 ## Phenotype Names & Centers
@@ -76,7 +76,7 @@ kable(assay.center) %>%
 pheno.names.centers <- as.data.frame.matrix(table(IMPC.summary.stats$parameter_name, IMPC.summary.stats$phenotyping_center))
 kable(pheno.names.centers) %>% 
   kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F) %>%
-  scroll_box(width = "100%", height = "400px")
+  scroll_box(height = "500px")
 
 pheno.names <- as.data.frame.vector(table(IMPC.summary.stats$parameter_name))
 colnames(pheno.names) <- "Counts"
@@ -88,7 +88,7 @@ ggplot(data=pheno.names, aes(pheno.names$Counts)) + geom_histogram() + labs(x="P
 mutant.lines.centers <- as.data.frame.matrix(table(IMPC.summary.stats$marker_symbol_combined, IMPC.summary.stats$phenotyping_center))
 kable(mutant.lines.centers) %>% 
   kable_styling(bootstrap_options = c("striped","condensed","responsive"), full_width = F) %>%
-  scroll_box(width = "100%", height = "400px")
+  scroll_box(height = "500px")
 
 mutant.lines <- as.data.frame.vector(table(IMPC.summary.stats$marker_symbol_combined))
 colnames(mutant.lines) <- "Counts"
